@@ -1,11 +1,14 @@
 """ Training functions for the different models. """
 from collections import OrderedDict
 from pathlib import Path
+import sys
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from generative.losses.adversarial_loss import PatchAdversarialLoss
+sys.path.append("../../../../MedLatentDiff/generative_models/generative/losses")
+from adversarial_loss import PatchAdversarialLoss
+#from generative.losses.adversarial_loss import PatchAdversarialLoss
 from pynvml.smi import nvidia_smi
 from tensorboardX import SummaryWriter
 from torch.cuda.amp import GradScaler, autocast
@@ -149,7 +152,9 @@ def train_epoch_aekl(
 
     pbar = tqdm(enumerate(loader), total=len(loader))
     for step, x in pbar:
-        images = x["image"].to(device)
+        
+        #images = x["image"].to(device)
+        images = x.to(device)
 
         # GENERATOR
         optimizer_g.zero_grad(set_to_none=True)
@@ -251,7 +256,9 @@ def eval_aekl(
     adv_loss = PatchAdversarialLoss(criterion="least_squares", no_activation_leastsq=True)
     total_losses = OrderedDict()
     for x in loader:
-        images = x["image"].to(device)
+        print(x.shape)
+        #images = x["image"].to(device)
+        images = x.to(device)
 
         with autocast(enabled=True):
             # GENERATOR

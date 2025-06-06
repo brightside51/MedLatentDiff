@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Tuple, Union
 
+import sys
 import matplotlib.pyplot as plt
 import mlflow.pytorch
 import numpy as np
@@ -15,13 +16,13 @@ from monai.data import PersistentDataset
 from omegaconf import OmegaConf
 from omegaconf.dictconfig import DictConfig
 from tensorboardX import SummaryWriter
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Subset, ConcatDataset
+
 from tqdm import tqdm
 
-
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 # DATA LOADING
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
 def get_datalist(
     ids_path: str,
     extended_report: bool = False,
@@ -44,7 +45,7 @@ def get_datalist(
     print(f"Found {len(data_dicts)} subjects.")
     return data_dicts
 
-
+"""
 def get_dataloader(
     cache_dir: Union[str, Path],
     batch_size: int,
@@ -170,11 +171,50 @@ def get_dataloader(
     )
 
     return train_loader, val_loader
+"""
 
+sys.path.append("../../python")
+from dataloader import NCDataset
 
-# ----------------------------------------------------------------------------------------------------------------------
+def get_dataloader(settings):
+    private_train_dataset = NCDataset(  settings,
+                                        mode = 'train',
+                                        dataset = 'private')
+    public_train_dataset = NCDataset(   settings,
+                                        mode = 'train',
+                                        dataset = 'public')
+    train_dataset = ConcatDataset([private_train_dataset, public_train_dataset])
+
+    private_val_dataset = NCDataset(    settings,
+                                        mode = 'test',
+                                        dataset = 'private')
+    public_val_dataset = NCDataset(     settings,
+                                        mode = 'test',
+                                        dataset = 'public')
+    val_dataset = ConcatDataset([private_val_dataset, public_val_dataset])
+
+    train_dataloader = DataLoader(train_dataset,
+        batch_size=settings.batch_size,
+        num_workers=settings.num_workers,
+        drop_last=False,
+        pin_memory=True,
+        shuffle = settings.shuffle,
+        persistent_workers=True)
+
+    val_dataloader = DataLoader(val_dataset,
+        batch_size=settings.batch_size,
+        num_workers=settings.num_workers,
+        drop_last=False,
+        pin_memory=True,
+        shuffle = settings.shuffle,
+        persistent_workers=True)
+    
+    return train_dataloader, val_dataloader
+
+# ------------------------------------------------------------------------------------
 # LOGS
-# ----------------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------
+
 def recursive_items(dictionary, prefix=""):
     for key, value in dictionary.items():
         if type(value) in [dict, DictConfig]:

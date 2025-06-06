@@ -1,0 +1,31 @@
+{
+  "tabs": [
+    {
+      "name": "MedLatentDiff_V0",
+      "tabGroups": [
+        {
+          "files": [
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/cluster/runai/training/stage1.sh",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/src/python/training/train_aekl_V0.py",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/configs/stage1/aekl_v0.yaml",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/cfg_V0.sh",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MetaBreast/logs/lmed_diff/V0/output.out",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MetaBreast/logs/lmed_diff/V0/error.err",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/src/python/training/util.py",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/src/python/dataloader.py",
+            "file:///x%3A/nas-ctm01/homes/pfsousa/MedLatentDiff/src/python/training/train_ldm.py"
+          ],
+          "viewColumn": 1
+        }
+      ],
+      "layout": {
+        "orientation": 1,
+        "groups": [
+          {
+            "size": 615
+          }
+        ]
+      }
+    }
+  ]
+}
